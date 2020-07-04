@@ -18,6 +18,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import Modal from "../../components/modal";
 import {openModal} from "../../actions/modal.action";
+import { format } from "date-fns";
 
 export interface UserListProps {
     users: User[];
@@ -42,7 +43,7 @@ class UserList extends Component<UserListProps> {
                         {user.name}
                     </TableCell>
                     <TableCell component="th" align="center" scope="row">
-                        {user.dateOfBirth}
+                        {format(new Date(user.dateOfBirth), "dd/MM/yyyy")}
                     </TableCell>
                     <TableCell align="center">
                         <Tooltip title="Editar">
