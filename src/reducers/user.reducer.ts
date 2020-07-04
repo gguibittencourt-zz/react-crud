@@ -1,15 +1,15 @@
-import {UsersActionTypes} from "../actions/user.actions";
+import {UsersActionTypes} from "../actions/user.action";
 
 export interface User {
     id: string;
-    name: string | null;
+    name: String;
     dateOfBirth: Date | null;
     active: boolean;
 }
 
 export interface UsersState {
     id: string;
-    name: string | null;
+    name: String;
     dateOfBirth: Date | null;
     active: boolean;
     items: User[];
@@ -19,21 +19,30 @@ export interface UsersState {
 
 const initialState: UsersState = {
     items: [],
-    id: '', dateOfBirth: null, name: '', active: true,
+    id: '', dateOfBirth: new Date(), name: '', active: true,
     loading: false,
     error: null
 };
 
-export const userReducer = (state = initialState, action: any) => {
+export default (state = initialState, action: any) => {
     switch (action.type) {
         case UsersActionTypes.FETCH_USERS:
         case UsersActionTypes.ADD_USER:
+        case UsersActionTypes.DELETE_USER:
             return {...state, loading: true};
         case UsersActionTypes.FETCH_USERS_SUCCESS:
         case UsersActionTypes.ADD_USER_SUCCESS:
+            if (!action.payload) {
+                return state;
+            }
             return {
                 ...state,
                 items: [].concat(action.payload)
+            };
+        case UsersActionTypes.DELETE_USER_SUCCESS:
+            return {
+                ...state,
+                items: state.items.filter(value => value.id !== action.id)
             };
         case UsersActionTypes.FETCH_USERS_FAIL:
         case UsersActionTypes.ADD_USER_FAIL:

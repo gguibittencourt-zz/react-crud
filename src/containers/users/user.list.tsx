@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {User, UsersState} from "../../reducers/user.reducer";
-import {fetchUsers} from "../../actions/user.actions";
+import {User} from "../../reducers/user.reducer";
+import {fetchUsers} from "../../actions/user.action";
 import {
     Button,
     IconButton,
@@ -16,10 +16,13 @@ import {
 } from "@material-ui/core";
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
+import Modal from "../../components/modal";
+import {openModal} from "../../actions/modal.action";
 
 export interface UserListProps {
     users: User[];
     fetchUsers: () => any;
+    openModal: (props: any) => any;
 }
 
 class UserList extends Component<UserListProps> {
@@ -49,7 +52,8 @@ class UserList extends Component<UserListProps> {
                             </IconButton>
                         </Tooltip>
                         <Tooltip title="Excluir">
-                            <IconButton className="button" component='a' aria-label="delete">
+                            <IconButton className="button" onClick={() => this.openModal(user)}
+                                        aria-label="delete">
                                 <DeleteIcon/>
                             </IconButton>
                         </Tooltip>
@@ -79,13 +83,22 @@ class UserList extends Component<UserListProps> {
                         </TableBody>
                     </Table>
                 </TableContainer>
+                <Modal/>
             </div>
         );
     }
+
+    openModal(user: any) {
+        this.props.openModal({
+            id: user.id,
+            title: 'Excluir usuário',
+            message: `Deseja excluir o usuário ${user.name}?`
+        });
+    }
 }
 
-const mapStateToProps = (state: UsersState) => ({
-    users: state.items,
+const mapStateToProps = (state: any) => ({
+    users: state.userReducer.items,
 });
 
-export default connect(mapStateToProps, {fetchUsers})(UserList);
+export default connect(mapStateToProps, {fetchUsers, openModal})(UserList);

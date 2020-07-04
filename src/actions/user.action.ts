@@ -1,6 +1,7 @@
 import {Dispatch} from 'redux';
-import {get, post} from "../services/user.service";
+import {get, post, remove} from "../services/user.service";
 import {User} from "../reducers/user.reducer";
+import {closeModal} from "./modal.action";
 
 export enum UsersActionTypes {
     FETCH_USERS = 'FETCH_USERS',
@@ -9,6 +10,8 @@ export enum UsersActionTypes {
     ADD_USER = 'ADD_USER',
     ADD_USER_SUCCESS = 'ADD_USER_SUCCESS',
     ADD_USER_FAIL = 'ADD_USER_FAIL',
+    DELETE_USER = 'DELETE_USER',
+    DELETE_USER_SUCCESS = 'DELETE_USER_SUCCESS',
     HANDLE_ON_CHANGE = 'HANDLE_ON_CHANGE'
 }
 
@@ -39,7 +42,6 @@ export const fetchUsers = (): any => {
         );
     }
 };
-
 
 export const handleAddUsers = (dispatch: Dispatch) => {
     dispatch({type: UsersActionTypes.ADD_USER});
@@ -82,3 +84,25 @@ export const onChangeProps = (props: any, value: any): any => {
         dispatch(handleOnChangeProps(props, value));
     }
 }
+
+const handleDeleteUsersSuccess = (dispatch: Dispatch, id: string) => {
+    dispatch({
+        type: UsersActionTypes.DELETE_USER_SUCCESS,
+        id
+    });
+};
+
+export const handleDeleteUsers = (dispatch: Dispatch) => {
+    dispatch({type: UsersActionTypes.DELETE_USER});
+};
+
+export const deleteUser = (id: string): any => {
+    return (dispatch: Dispatch) => {
+        handleDeleteUsers(dispatch);
+
+        return remove(`/users/${id}`).then(() => {
+            handleDeleteUsersSuccess(dispatch, id);
+            dispatch(closeModal());
+        });
+    }
+};

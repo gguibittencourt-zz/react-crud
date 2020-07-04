@@ -1,8 +1,13 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {User, UsersState} from "../../reducers/user.reducer";
-import {addUser, onChangeProps} from "../../actions/user.actions";
-import {Button, Grid, Paper, TextField} from "@material-ui/core";
+import {addUser, onChangeProps} from "../../actions/user.action";
+import {
+    Button,
+    Grid,
+    Paper,
+    TextField
+} from "@material-ui/core";
 
 export interface UserAddProps {
     addUser: (user: User) => any;
@@ -12,13 +17,14 @@ export interface UserAddProps {
 
 class UserAdd extends Component<UserAddProps> {
 
-    handleClick() {
+    handleSave() {
         const payload: User = {
             id: this.props.state.id,
             name: this.props.state.name,
             dateOfBirth: this.props.state.dateOfBirth,
             active: this.props.state.active,
         }
+        console.log(payload);
         this.props.addUser(payload);
     }
 
@@ -36,8 +42,9 @@ class UserAdd extends Component<UserAddProps> {
                                 <TextField
                                     id="name"
                                     label="Nome"
+                                    className="textField"
                                     value={this.props.state.name}
-                                    onBlur={this.handleChange('name')}
+                                    onChange={this.handleChange('name')}
                                     margin="normal"
                                 />
                             </Grid>
@@ -48,7 +55,7 @@ class UserAdd extends Component<UserAddProps> {
                                 <Button variant="contained" color="default" href="/">
                                     Cancelar
                                 </Button>
-                                <Button variant="contained" color="primary" className="ml-1" onClick={() => this.handleClick()}>
+                                <Button variant="contained" color="primary" onClick={() => this.handleSave()} className="ml-1">
                                     Salvar
                                 </Button>
                             </Grid>
@@ -61,8 +68,8 @@ class UserAdd extends Component<UserAddProps> {
     }
 }
 
-const mapStateToProps = (state: UsersState) => ({
-    state: state,
+const mapStateToProps = (state: any) => ({
+    state: state.userReducer,
 });
 
 export default connect(mapStateToProps, {addUser, onChangeProps})(UserAdd);

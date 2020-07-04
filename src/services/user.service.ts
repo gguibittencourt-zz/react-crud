@@ -1,5 +1,5 @@
 import axios from '../config';
-import {User} from "../reducers/user.reducer";
+import {User} from '../reducers/user.reducer';
 
 export const get = (apiEndpoint: string) => axios.get(apiEndpoint).then((response) => {
     return response;
