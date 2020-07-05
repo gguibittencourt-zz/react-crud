@@ -1,18 +1,31 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {User, UsersState} from "../../reducers/user.reducer";
-import {addUser, onChangeProps} from "../../actions/user.action";
+import {addUser, getUser, onChangeProps, updateUser} from "../../actions/user.action";
 import {Button, Grid, Paper, TextField} from "@material-ui/core";
 import DateFnsUtils from '@date-io/date-fns';
 import {DatePicker, MuiPickersUtilsProvider} from "@material-ui/pickers";
+import {RouteComponentProps} from 'react-router-dom';
 
 export interface UserAddProps {
     addUser: (user: User) => any;
+    updateUser: (user: User) => any;
     onChangeProps: (props: string, value: any) => any;
+    getUser: (id: string) => any;
     state: UsersState;
 }
 
-class UserAdd extends Component<UserAddProps> {
+type Props = UserAddProps & RouteComponentProps<any>
+
+class UserAdd extends Component<Props> {
+
+    componentDidMount() {
+        const {match: {params}} = this.props;
+
+        if (params.id) {
+            this.props.getUser(params.id);
+        }
+    }
 
     handleSave() {
         const payload: User = {
@@ -20,6 +33,11 @@ class UserAdd extends Component<UserAddProps> {
             name: this.props.state.name,
             dateOfBirth: this.props.state.dateOfBirth,
             active: this.props.state.active,
+        }
+        const {match: {params}} = this.props;
+        if (params.id) {
+            this.props.updateUser(payload);
+            return;
         }
         this.props.addUser(payload);
     }
@@ -38,7 +56,7 @@ class UserAdd extends Component<UserAddProps> {
                 <div className="mt-3">
                     <Paper elevation={1} className="p-2">
                         <form>
-                            <Grid container>
+                            <Grid className="d-block" container>
                                 <Grid item xs={6}>
                                     <TextField
                                         id="name"
@@ -49,12 +67,14 @@ class UserAdd extends Component<UserAddProps> {
                                         margin="normal"
                                     />
                                 </Grid>
-                                <DatePicker
-                                    label="Data de nascimento"
-                                    value={this.props.state.dateOfBirth}
-                                    onChange={this.handleChangeDate('dateOfBirth')}
-                                    animateYearScrolling
-                                />
+                                <Grid item xs={6}>
+                                    <DatePicker
+                                        label="Data de nascimento"
+                                        value={this.props.state.dateOfBirth}
+                                        onChange={this.handleChangeDate('dateOfBirth')}
+                                        animateYearScrolling
+                                    />
+                                </Grid>
                             </Grid>
                             <Grid container>
 
@@ -81,4 +101,4 @@ const mapStateToProps = (state: any) => ({
     state: state.userReducer,
 });
 
-export default connect(mapStateToProps, {addUser, onChangeProps})(UserAdd);
+export default connect(mapStateToProps, {addUser, onChangeProps, getUser, updateUser})(UserAdd);

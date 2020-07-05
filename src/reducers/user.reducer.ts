@@ -40,6 +40,16 @@ export default (state = initialState, action: any) => {
                 ...state,
                 items: state.items.filter(value => value.id !== action.id)
             };
+        case UsersActionTypes.UPDATE_USER:
+            return state;
+        case UsersActionTypes.GET_USER:
+            return {
+                ...state,
+                id: action.payload.id,
+                name: action.payload.name,
+                dateOfBirth: action.payload.dateOfBirth,
+                active: action.payload.active,
+            };
         case UsersActionTypes.HANDLE_ON_CHANGE:
             return {
                 ...state,

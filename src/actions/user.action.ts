@@ -1,12 +1,14 @@
 import {Dispatch} from 'redux';
-import {get, post, remove} from '../services/user.service';
+import {get, post, put, remove} from '../services/user.service';
 import {User} from '../reducers/user.reducer';
 import {closeModal} from './modal.action';
 import history from '../helpers/history';
 
 export enum UsersActionTypes {
     FETCH_USERS = 'FETCH_USERS',
+    GET_USER = 'GET_USER',
     ADD_USER = 'ADD_USER',
+    UPDATE_USER = 'UPDATE_USER',
     DELETE_USER = 'DELETE_USER',
     HANDLE_ON_CHANGE = 'HANDLE_ON_CHANGE'
 }
@@ -71,5 +73,39 @@ export const deleteUser = (id: string): any => {
             handleDeleteUsersSuccess(dispatch, id);
             dispatch(closeModal());
         });
+    }
+};
+
+const handleGetUserSuccess = (dispatch: Dispatch, user: any) => {
+    dispatch({
+        type: UsersActionTypes.GET_USER,
+        payload: user
+    });
+};
+
+export const getUser = (id: string): any => {
+    return (dispatch: Dispatch) => {
+        return get(`/users/${id}`).then((user) => {
+            handleGetUserSuccess(dispatch, user.data);
+        });
+    }
+};
+
+const handleUpdateUsersSuccess = (dispatch: Dispatch, response: User) => {
+    dispatch({
+        type: UsersActionTypes.UPDATE_USER,
+        payload: response
+    });
+};
+
+export const updateUser = (user: User): any => {
+    return (dispatch: Dispatch) => {
+        return put(`/users/${user.id}`, user).then(
+            response => {
+                handleUpdateUsersSuccess(dispatch, response.data);
+                fetchUsers();
+                history.back();
+            }
+        );
     }
 };
